@@ -86,9 +86,22 @@ const Person = mongoose.model("Person", personSchema);
 //    ...do your stuff here...
 // });
 
+
+
 var createAndSavePerson = function(done) {
   
-  done(null /*, data*/);
+  var Adee = new Person({
+  name: 'Adarsh',
+  age: 21,
+  favoriteFoods: ['Spring Rools']
+})
+  
+  Adee.save((err,data)=>{
+    if(err) return console.log(err);
+    done(null,data);
+  })
+  
+  //done(null /*, data*/);
 
 };
 
@@ -100,10 +113,18 @@ var createAndSavePerson = function(done) {
 // as the 1st argument, and saves them all in the db.
 // Create many people using `Model.create()`, using the function argument
 // 'arrayOfPeople'.
-
+var arrayOfPeople = [
+                     {name: 'Aman',  age: 21,  favoriteFoods: ['Spring Rools']},
+                     {name: 'Chintu',  age: 21,  favoriteFoods: ['Spring Rools']}
+                    ]
 var createManyPeople = function(arrayOfPeople, done) {
+  
+    Person.create(arrayOfPeople,(err,data)=>{
+      if(err) return console.log(err);
+      done(null,data);
+    })
     
-    done(null/*, data*/);
+    //done(null/*, data*/);
     
 };
 
