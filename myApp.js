@@ -138,10 +138,13 @@ var createManyPeople = function(arrayOfPeople, done) {
 // object ) as the first argument, and returns an **array** of matches.
 // It supports an extremely wide range of search options. Check it in the docs.
 // Use the function argument `personName` as search key.
-
+var personName = 'Adarsh';
 var findPeopleByName = function(personName, done) {
-  
-  done(null/*, data*/);
+  Person.find({name:personName},(err,res)=>{
+    if(err) return console.log(err);
+    done(null,res);
+  })
+  //done(null/*, data*/);
 
 };
 
@@ -153,10 +156,13 @@ var findPeopleByName = function(personName, done) {
 // Find just one person which has a certain food in her favorites,
 // using `Model.findOne() -> Person`. Use the function
 // argument `food` as search key
-
+var food = 'Spring Rools';
 var findOneByFood = function(food, done) {
-
-  done(null/*, data*/);
+  Person.findOne({favoriteFoods:food},(err,res)=>{
+    if(err) return console.log(err);
+    done(null,res);
+  })
+  //done(null/*, data*/);
   
 };
 
@@ -169,9 +175,13 @@ var findOneByFood = function(food, done) {
 // using `Model.findById() -> Person`.
 // Use the function argument 'personId' as search key.
 
+
 var findPersonById = function(personId, done) {
-  
-  done(null/*, data*/);
+  Person.findById(personId,(err,res)=>{
+    if(err) return console.log(err);
+    done(null,res);
+  })
+  //done(null/*, data*/);
   
 };
 
@@ -200,11 +210,22 @@ var findPersonById = function(personId, done) {
 // manually mark it as edited using `document.markModified('edited-field')`
 // (http://mongoosejs.com/docs/schematypes.html - #Mixed )
 
-var findEditThenSave = function(personId, done) {
-  var foodToAdd = 'hamburger';
+let findEditThenSave = function(personId, done) {
+  let foodToAdd = 'hamburger';
   
-  done(null/*, data*/);
+  Person.findById(personId, (err, data) => {
+    if (err) { done(err) }
+    console.log(data);
+    data.favoriteFoods.push(foodToAdd);
+    data.save((err, data) => {
+    if (err) { done(err) }
+    else { done(null, data) }
+  });
+  
+  });
+  
 };
+
 
 /** 9) New Update : Use `findOneAndUpdate()` */
 
@@ -222,9 +243,13 @@ var findEditThenSave = function(personId, done) {
 // passes the unmodified object to its callback.
 
 var findAndUpdate = function(personName, done) {
+  
   var ageToSet = 20;
-
-  done(null/*, data*/);
+  Person.findOneAndUpdate({name : personName } , {$set: {age: ageToSet}} ,{ new: true }, (err , data) => {
+      if(err) done(err); 
+      done(null,data);
+  });
+  //done(null/*, data*/);
 };
 
 /** # CRU[D] part IV - DELETE #
@@ -239,7 +264,9 @@ var findAndUpdate = function(personName, done) {
 
 var removeById = function(personId, done) {
   
-  done(null/*, data*/);
+  
+  Person.findByIdAndRemove(personId, (err, data) => err ? done(err) : done(null, data));
+  //done(null/*, data*/);
     
 };
 
@@ -255,8 +282,8 @@ var removeById = function(personId, done) {
 
 var removeManyPeople = function(done) {
   var nameToRemove = "Mary";
-
-  done(null/*, data*/);
+  Person.remove({name:nameToRemove},(err,res)=>(err)?done(err):done(null,res))
+                                 
 };
 
 /** # C[R]UD part V -  More about Queries # 
@@ -276,11 +303,15 @@ var removeManyPeople = function(done) {
 // Limit the results to two documents, and hide their age.
 // Chain `.find()`, `.sort()`, `.limit()`, `.select()`, and then `.exec()`,
 // passing the `done(err, data)` callback to it.
-
+var findQuery = Person.find({})
 var queryChain = function(done) {
   var foodToSearch = "burrito";
+  //done(null/*, data*/);
   
-  done(null/*, data*/);
+   var jsonObject = {favoriteFoods : foodToSearch};
+  Person.find(jsonObject).sort({name: 1}).limit(2).select({age: 0}).exec((err, data) => {
+    (err) ? done(err) : done(null, data); 
+  })
 };
 
 /** **Well Done !!**
